@@ -35,16 +35,24 @@ router.use(bodyParser.json());
 //insert 
 router.post('/', async (req, res) => {
   const cat = req.body;
-  console.log(cat);
+  // console.log(cat);
+  const existingCode = await Pool.query(`SELECT id FROM category WHERE code = '${cat.code}'`);
+  if (existingCode.rows.length > 0) {
+    return res.status(409).send({ 
+      message: 'Code already exists' });
+  }
   const category1 = `insert into category( name, code,parent_id) 
-                 values('${cat.name}', '${cat.code}', ${cat.parent_id}) RETURNING id`
+                 values('${cat.name}', '${cat.code}', ${cat.parent_id}) RETURNING *`
   const category = await Pool.query(category1)
   if (category) {
-    console.log(cat);
-    res.send(cat);
+    res.send({
+      status: true,
+      data: category.rows,
+      message: `DATA INSERTED SUCCESFULLY`
+    })
   }
   else {
-    console.log("err");
+    res.status(404).send("Error Occured")
   }
 });
 
@@ -340,7 +348,7 @@ router.delete('/:id', async (req, res) => {
         message: "UNABLE TO DELETE"
       })
     }
-  }else{
+  } else {
     res.status(409).send({
       status: false,
       message: "INVALID ID"
