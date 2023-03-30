@@ -251,7 +251,7 @@ router.get('/', async (req, res) => {
 
 //get all
 router.get('/', async (req, res) => {
-  const all = await Pool.query('SELECT * FROM category WHERE parent_id IS NULL')
+  const all = await Pool.query('SELECT * FROM category')
   if (all) {
     res.send({
       status: true,
