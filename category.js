@@ -38,8 +38,9 @@ router.post('/', async (req, res) => {
   // console.log(cat);
   const existingCode = await Pool.query(`SELECT id FROM category WHERE code = '${cat.code}'`);
   if (existingCode.rows.length > 0) {
-    return res.status(409).send({ 
-      message: 'Code already exists' });
+    return res.status(409).send({
+      message: 'Code already exists'
+    });
   }
   const category1 = `insert into category( name, code,parent_id) 
                  values('${cat.name}', '${cat.code}', ${cat.parent_id}) RETURNING *`
@@ -56,27 +57,27 @@ router.post('/', async (req, res) => {
   }
 });
 
-async function getDataById(id) {
-  // const client = await Pool.connect();
-  try {
-    var category = await Pool.query('SELECT * FROM category WHERE id = $1', [id]);
-    category = category.rows[0];
-    //console.log(category)
-    var parentCategory = {}
-    if (category.parent_id !== null) {
-      // console.log("present");
-      parentCategory = await getDataById(category.parent_id)
-      category.parentCategory = parentCategory;
-    }
+// async function getDataById(id) {
+//   // const client = await Pool.connect();
+//   try {
+//     var category = await Pool.query('SELECT * FROM category WHERE id = $1', [id]);
+//     category = category.rows[0];
+//     //console.log(category)
+//     var parentCategory = {}
+//     if (category.parent_id !== null) {
+//       // console.log("present");
+//       parentCategory = await getDataById(category.parent_id)
+//       category.parentCategory = parentCategory;
+//     }
 
-    // category.parentCategory = parentCategory.rows[0];
-    return category; // return the first row if there is any
+//     // category.parentCategory = parentCategory.rows[0];
+//     return category; // return the first row if there is any
 
-  }
-  catch (error) {
-    console.error(error);
-  }
-}
+//   }
+//   catch (error) {
+//     console.error(error);
+//   }
+// }
 
 // router.get('/:id', async (req, res) => {
 //   const id = req.params.id;
@@ -99,35 +100,79 @@ async function getDataById(id) {
 //   }
 // });
 
+// router.get('/:id', async (req, res) => {
+//   // console.log(req.params.id);
+//   const id = req.params.id;
+//   console.log(Number(id));
+//   if (!isNaN(Number(id))) {
+//     const query = 'SELECT * from category WHERE id = $1';
+//     console.log(query);
+//     const result = await Pool.query(query, [id]);
+//   if (result.rows.length > 0) {
+//     res.status(200).send({
+//       status: true,
+//       data: result.rows,
+//       message: `DATA WITH ID ${id} FETCHED SUCCESFULLY`
+//     }
+//     )
+//   }
+//   else {
+//     res.status(404).send({
+//       status: false,
+//       message: `DATA NOT FOUND`
+//     })
+//   }
+// } else {
+//   res.status(404).send({
+//     status: false,
+//     message: `INVALID ID`
+//   })
+// }
+//});
+
+
+// getby id
+async function getDataById(id) {
+  try {
+    var cat = await Pool.query(`SELECT * FROM category where id = $1`, [id]);
+    cat = cat.rows[0];
+    console.log(cat);
+    var parentCategory = {}
+    if (cat.parent_id !== null) {
+      parentCategory = await getDataById(cat.parent_id)
+      cat.parentCategory = parentCategory;
+    }
+    return cat;
+  }
+  catch (err) {
+    console.log(err.message);
+  }
+}
+
 router.get('/:id', async (req, res) => {
-  // console.log(req.params.id);
   const id = req.params.id;
-  console.log(Number(id));
   if (!isNaN(Number(id))) {
-    const query = 'SELECT * from category WHERE id = $1';
-    console.log(query);
-    const result = await Pool.query(query, [id]);
-    if (result.rows.length > 0) {
+    const data = await getDataById(id)
+    if (data) {
       res.status(200).send({
         status: true,
-        data: result.rows,
+        data: data,
         message: `DATA WITH ID ${id} FETCHED SUCCESFULLY`
       }
       )
-    }
-    else {
+    } else {
       res.status(404).send({
         status: false,
         message: `DATA NOT FOUND`
       })
     }
-  } else {
+  }
+  else {
     res.status(404).send({
       status: false,
       message: `INVALID ID`
     })
   }
-
 });
 
 async function getAllchildDataById(id) {
