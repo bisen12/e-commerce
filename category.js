@@ -248,9 +248,9 @@ async function getAllDataById(id) {
   catch (err) {
     console.log(err)
   }
-  finally {
-    client.release();
-  }
+  // finally {
+  //   client.release();
+  // }
 }
 
 async function getAllData() {
