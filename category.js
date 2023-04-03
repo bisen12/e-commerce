@@ -244,8 +244,8 @@ async function getAllDataById(id) {
     }
     category.parentCategory = parentCategory;
     return category;
-  } finally {
-    client.release();
+  } catch (err) {
+    console.log(err.message);
   }
 }
 
@@ -259,8 +259,8 @@ async function getAllData() {
       data.push(category);
     }
     return data;
-  } finally {
-    client.release();
+  } catch (err) {
+    console.log(err.message);
   }
 }
 
