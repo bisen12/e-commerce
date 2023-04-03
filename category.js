@@ -244,8 +244,12 @@ async function getAllDataById(id) {
     }
     category.parentCategory = parentCategory;
     return category;
-  } catch (err) {
-    console.log(err.message);
+  }
+  catch (err) {
+    console.log(err)
+  }
+  finally {
+    client.release();
   }
 }
 
@@ -259,9 +263,13 @@ async function getAllData() {
       data.push(category);
     }
     return data;
-  } catch (err) {
-    console.log(err.message);
+  } 
+  catch (err) {
+    console.log(err)
   }
+  // finally {
+  //   client.release();
+  // }
 }
 
 router.get('/', async (req, res) => {
