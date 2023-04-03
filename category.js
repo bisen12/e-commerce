@@ -231,9 +231,9 @@ router.get('/:id', async (req, res) => {
 
 
 async function getAllDataById(id) {
-  const client = await Pool.connect();
+  // const client = await Pool.connect();
   try {
-    const result = await client.query('SELECT * FROM category WHERE id = $1', [id]);
+    const result = await Pool.query('SELECT * FROM category WHERE id = $1', [id]);
     if (result.rows.length === 0) {
       return null;
     }
@@ -254,9 +254,9 @@ async function getAllDataById(id) {
 }
 
 async function getAllData() {
-  const client = await Pool.connect();
+  // const client = await Pool.connect();
   try {
-    const result = await client.query('SELECT * FROM category');
+    const result = await Pool.query('SELECT * FROM category');
     const data = [];
     for (const row of result.rows) {
       const category = await getAllDataById(row.id);
