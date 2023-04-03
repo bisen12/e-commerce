@@ -175,48 +175,61 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-async function getAllchildDataById(id) {
-  // const client = await Pool.connect();
-  try {
-    var category = await Pool.query('SELECT * FROM category WHERE id = $1', [id]);
-    category = category.rows[0];
-    var childCategories = []
-    const children = await Pool.query('SELECT * FROM category WHERE parent_id = $1', [id]);
-    if (children.rows.length > 0) {
-      for (const child of children.rows) {
-        const childData = await getAllchildDataById(child.id);
-        childCategories.push(childData);
-      }
-    }
-    category.childCategories = childCategories;
-    return category;
+// async function getAllchildDataById(id) {
+//   // const client = await Pool.connect();
+//   try {
+//     var category = await Pool.query('SELECT * FROM category WHERE id = $1', [id]);
+//     category = category.rows[0];
+//     var childCategories = []
+//     const children = await Pool.query('SELECT * FROM category WHERE parent_id = $1', [id]);
+//     if (children.rows.length > 0) {
+//       for (const child of children.rows) {
+//         const childData = await getAllchildDataById(child.id);
+//         childCategories.push(childData);
+//       }
+//     }
+//     category.childCategories = childCategories;
+//     return category;
 
-  } catch (error) {
-    console.error(error);
-  }
+//   } catch (error) {
+//     console.error(error);
+//   }
 
-}
+// }
 
-router.get('/child/:id', async (req, res) => {
-  const id = req.params.id;
-  try {
-    const data = await getAllchildDataById(id);
-    if (!data) {
-      return res.status(404).send('Data not found');
-    }
-    res.send({
-      status: true,
-      data: data,
-      message: "DATA FOUND"
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
-  }
-});
+// router.get('/child/:id', async (req, res) => {
+//   const id = req.params.id;
+//   try {
+//     const data = await getAllchildDataById(id);
+//     if (!data) {
+//       return res.status(404).send('Data not found');
+//     }
+//     res.send({
+//       status: true,
+//       data: data,
+//       message: "DATA FOUND"
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send('Server error');
+//   }
+// });
 
 
-/*
+// //get parentid to childid
+// router.get('/', async (req, res) => {
+//   const parent_id = req.params.parent_id;
+//   try {
+//     const children = await Pool.query('SELECT * FROM category');
+//     res.json(children.rows);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// });
+
+
+
 async function getAllDataById(id) {
   const client = await Pool.connect();
   try {
@@ -260,7 +273,9 @@ router.get('/', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
-*/
+
+
+
 // async function getData() {
 //   // const client = await Pool.connect();
 //   try {
@@ -285,7 +300,7 @@ router.get('/', async (req, res) => {
 //     const data = await getData();
 //     res.send({
 //       status:true,
-//       data:data.rows,
+//       data:data,
 //       message:"DATA FOUND"
 //     });
 //   } catch (err) {
@@ -294,17 +309,17 @@ router.get('/', async (req, res) => {
 //   }
 // });
 
-//get all
-router.get('/', async (req, res) => {
-  const all = await Pool.query('SELECT * FROM category')
-  if (all) {
-    res.send({
-      status: true,
-      data: all.rows,
-      message: "PRODUCT_FETCH_SUCCESS"
-    })
-  }
-});
+// //get all
+// router.get('/', async (req, res) => {
+//   const all = await Pool.query('SELECT * FROM category')
+//   if (all) {
+//     res.send({
+//       status: true,
+//       data: all.rows,
+//       message: "PRODUCT_FETCH_SUCCESS"
+//     })
+//   }
+// });
 
 
 
